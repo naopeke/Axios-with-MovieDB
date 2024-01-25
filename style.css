@@ -10,7 +10,7 @@ body {
 	color: #1d1d1d;
 }
 
-.contenedor {
+.container {
 	width: 90%;
 	max-width: 1000px;
 	margin: 40px auto 100px auto;
@@ -20,23 +20,24 @@ body {
 	gap: 40px;
 }
 
-.contenedor .pelicula {
+.container .movie {
 	text-align: center;
 }
 
-.contenedor .pelicula .titulo {
+.container .movie .title {
 	font-size: 16px;
 	font-weight: 600;
 }
 
-.contenedor .pelicula .poster {
+.container .movie .poster {
 	width: 100%;
+	/* reservando el espacio para los posters con min-height*/
 	min-height: 200px;
 	margin-bottom: 10px;
 	border-radius: 15px;
 }
 
-.paginacion {
+.pagination {
 	position: fixed;
 	bottom: 0;
 	background: #100a1f;
@@ -47,7 +48,7 @@ body {
 	padding: 10px;
 }
 
-.paginacion button {
+.pagination button {
 	cursor: pointer;
 	border: none;
 	display: flex;
@@ -64,6 +65,6 @@ body {
 	transition: .3s ease all;
 }
 
-.paginacion button:hover {
+.pagination button:hover {
 	background: #137c32;
 }

@@ -1,63 +1,76 @@
-// pagina : present page number 
-let pagina = 1;
+// page : present page number 
+let page = 1;
 // HTML code
-let peliculas = '';
+let movies = '';
 // the latest movie 
-let ultimaPelicula;
+let latestMovie;
 
-// Creamos el observador
-let observador = new IntersectionObserver((entradas, observador) => {
-	console.log(entradas);
+// Creamos el observer
+// https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+//let callback = (entries, observer) => {
+	// entries.forEach((entry) => {
+	//   });
+	// };
+	
+let observer = new IntersectionObserver((entries, observer) => {
+	console.log(entries);
 
-	entradas.forEach(entrada => {
-		if(entrada.isIntersecting){
-			pagina++;
-			cargarPeliculas();
+	entries.forEach(entry => {
+		//si hay entry y están dentro de la pantalla (viewport) , carga la pagina
+		if(entry.isIntersecting){
+			page++;
+			loadMovies();
 		}
 	});
 }, {
+	// 200px es para se cargue cuando están dentro de la pantalla
 	rootMargin: '0px 0px 200px 0px',
 	threshold: 1.0
 });
 
 
-const cargarPeliculas = async() => {
+const loadMovies = async() => {
 	try {
-		const respuesta = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=192e0b9821564f26f52949758ea3c473&language=es-MX&page=${pagina}`);
+		const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=192e0b9821564f26f52949758ea3c473&language=es-MX&page=${page}`);
 	
-		// console.log(respuesta);
+		// console.log(response);
 
-		// Si la respuesta es correcta
-		if(respuesta.status === 200){
-			const datos = await respuesta.json();
+		// Si la response es correcta
+		if(response.status === 200){
+			const data = await response.json();
 			
-			datos.results.forEach(pelicula => {
-				peliculas += `
-					<div class="pelicula">
-						<img class="poster" src="https://image.tmdb.org/t/p/w500/${pelicula.poster_path}">
-						<h3 class="titulo">${pelicula.title}</h3>
+			data.results.forEach(movie => {
+				movies += `
+					<div class="movie">
+						<img class="poster" src="https://image.tmdb.org/t/p/w500/${movie.poster_path}">
+						<h3 class="titulo">${movie.title}</h3>
 					</div>
 				`;
 			});
 
-			document.getElementById('contenedor').innerHTML = peliculas;
+			document.getElementById('container').innerHTML = movies;
 
-			if(pagina < 1000){
-				if(ultimaPelicula){
-					observador.unobserve(ultimaPelicula);
+			if(page < 1000){
+				// si hay ultima pelicula, dejo de observar
+				if(latestMovie){
+					observer.unobserve(latestMovie);
 				}
 	
-				const peliculasEnPantalla = document.querySelectorAll('.contenedor .pelicula');
-				ultimaPelicula = peliculasEnPantalla[peliculasEnPantalla.length - 1];
-				observador.observe(ultimaPelicula);
+				const movieOnScreen = document.querySelectorAll('.container .movie');
+				console.log(movieOnScreen);
+
+				latestMovie = movieOnScreen[movieOnScreen.length - 1];
+				console.log(latestMovie);
+				// quiero que vigile la ultima pelicula
+				observer.observe(latestMovie);
 			}
 
-		} else if(respuesta.status === 401){
-			console.log('Pusiste la llave mal');
-		} else if(respuesta.status === 404){
-			console.log('La pelicula que buscas no existe');
+		} else if(response.status === 401){
+			console.log('API key error');
+		} else if(response.status === 404){
+			console.log('Does not exist this movie');
 		} else {
-			console.log('Hubo un error y no sabemos que paso');
+			console.log('Error');
 		}
 
 	} catch(error){
@@ -66,4 +79,4 @@ const cargarPeliculas = async() => {
 
 }
 
-cargarPeliculas();
+loadMovies();
